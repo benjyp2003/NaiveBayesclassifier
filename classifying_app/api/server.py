@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from requests import RequestException
 
 from classifying_app.api.client import Client
-from classifying_app.core.classifier import Classifier
+from app.core.classifier import Classifier
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
