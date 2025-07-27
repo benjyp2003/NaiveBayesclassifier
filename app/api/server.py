@@ -40,13 +40,13 @@ async def load_hardcoded_data():
         # load the CSV file
         df = pd.read_csv(os.path.join(_data_dir, file_name))
         # convert DataFrame to a list of dictionaries
-        data = df.to_dict(orient='records')
-        if not data:
+        data_dict = df.to_dict(orient='records')
+        if not data_dict:
             logger.warning(f"No data found in the {file_name} dataset.")
             return {"message": f"No data found in the {file_name} dataset.", "status": "error"}
 
         logger.info(f"Loaded hardcoded data from {file_name}.")
-        return {"data": data, "status": "success"}
+        return {"data": data_dict, "status": "success"}
     except Exception as e:
         logger.error(f"Error in /load_hardcoded_data: {e}")
         return {"message": f"An error occurred: {e}", "status": "error"}
@@ -118,8 +118,56 @@ async def test_model(request: Request):
         logger.error(f"Exception in /test_model: {e}")
         return {"message": f"An error occurred: {e}", "status": "error"}
 
+
+@app.get('/get_model')
+async def get_model():
+    """Return the currently trained model."""
+    logger.info("/get_model endpoint called.")
+    try:
+        # check if the model is loaded
+        if not MODEL:
+            logger.warning("No model has been trained.")
+            return {"message": "No model has been trained.", "status": "error"}
+        logger.info("Model returned successfully.")
+        return {"model": MODEL, "status": "success"}
+    except Exception as e:
+        logger.error(f"Error in /get_model: {e}")
+        return {"message": f"An error occurred: {e}", "status": "error"}
+
+@app.post('/classify')
+async def classify_data(request: Request):
+    """Classify a new example using the trained model."""
+    logger.info("/classify endpoint called.")
+    try:
+        body = await request.json()
+        new_example = body.get("new_example")
+        logger.info(f"Received classification request: {body}")
+        if not new_example:
+            logger.warning(f"Missing new_example in request body {body}")
+            return {"message": f"Missing new_example in request body {body}", "status": "error"}
+
+        model = MODEL
+        # check if the model is loaded
+        if MODEL is None:
+            logger.warning("Model not loaded. Please call /get_model first.")
+            return {"message": "Model not loaded. Please call /get_model first.", "status": "error"}
+
+        # get the predicted class using the Classifier
+        predicted_class = Classifier.classify_record(new_example, model)
+        if predicted_class:
+            logger.info(f"Classification successful. Predicted class: {predicted_class}")
+            return {"predicted_class": predicted_class, "status": "success"}
+        else:
+            logger.warning("Classification failed.")
+            return {"message": "Classification failed.", "status": "error"}
+    except Exception as e:
+        logger.error(f"An error occurred during classification: {e}")
+        return {"message": f"An error occurred during classification: {e}", "status": "error"}
+
+
 @app.post('/clean_csv')
 async def clean_csv_file(request: Request):
+    """Clean a CSV file and return the cleaned data."""
     logger.info("/clean_csv endpoint called.")
     try:
         body = await request.json()
@@ -160,8 +208,10 @@ async def clean_csv_file(request: Request):
         logger.error(f"Exception in /clean_csv: {e}")
         return {"message": f"An error occurred: {e}", "status": "error"}
 
+
 @app.post('/load_data')
 async def load_data(request: Request):
+    """Load data from a given path and return it as a list of dictionaries."""
     logger.info("/load_data endpoint called.")
     try:
         body = await request.json()
@@ -169,9 +219,13 @@ async def load_data(request: Request):
         if not path:
             logger.warning("No path was given in /load_data.")
             return {'message': "no path was given", "status": 'error'}
+
+        # check if the path exists
         if not os.path.exists(path):
             logger.warning(f"Path '{path}' not found in /load_data.")
             return {"message": f"Path '{path}' not found.", "status": "error"}
+
+        # load the CSV file
         data = pd.read_csv(path)
         data = data.to_dict(orient='records')
         logger.info(f"Loaded data from {path}.")
@@ -180,19 +234,25 @@ async def load_data(request: Request):
         logger.error(f"Exception in /load_data: {e}")
         return {"message": f"An error occurred: {e}", "status": "error"}
 
+
 @app.post('/cache_model')
 async def save_model(request: Request):
     """Cache the model temporarily on the server and return the path to the cached model."""
     logger.info("/cache_model endpoint called.")
     try:
         body = await request.json()
+        # check if the request body is empty
         if not body:
             logger.warning("Request body is empty in /cache_model.")
             return {"message": "Request body is empty.", "status": "error"}
+
         model_data = body.get("model")
+        # check if model data is provided
         if not model_data:
             logger.warning("Model data is missing in /cache_model.")
             return {"message": "Model data is missing.", "status": "error"}
+
+        # save the model data to a temporary file
         with tempfile.NamedTemporaryFile(mode='wb+', delete=False) as tmp:
             pickle.dump(model_data, tmp)
             temp_files.append(tmp.name)
@@ -202,45 +262,6 @@ async def save_model(request: Request):
         logger.error(f"Error in /cache_model: {e}")
         return {"message": f"An error occurred: {e}", "status": "error"}
 
-@app.get('/get_model')
-async def get_model():
-    """Return the currently trained model."""
-    logger.info("/get_model endpoint called.")
-    try:
-        if not MODEL:
-            logger.warning("No model has been trained.")
-            return {"message": "No model has been trained.", "status": "error"}
-        logger.info("Model returned successfully.")
-        return {"model": MODEL, "status": "success"}
-    except Exception as e:
-        logger.error(f"Error in /get_model: {e}")
-        return {"message": f"An error occurred: {e}", "status": "error"}
-
-@app.post('/classify')
-async def classify_data(request: Request):
-    """Classify a new example using the trained model."""
-    logger.info("/classify endpoint called.")
-    try:
-        body = await request.json()
-        new_example = body.get("new_example")
-        logger.info(f"Received classification request: {body}")
-        if not new_example:
-            logger.warning(f"Missing new_example in request body {body}")
-            return {"message": f"Missing new_example in request body {body}", "status": "error"}
-        model = MODEL
-        if MODEL is None:
-            logger.warning("Model not loaded. Please call /get_model first.")
-            return {"message": "Model not loaded. Please call /get_model first.", "status": "error"}
-        predicted_class = Classifier.classify_record(new_example, model)
-        if predicted_class:
-            logger.info(f"Classification successful. Predicted class: {predicted_class}")
-            return {"predicted_class": predicted_class, "status": "success"}
-        else:
-            logger.warning("Classification failed.")
-            return {"message": "Classification failed.", "status": "error"}
-    except Exception as e:
-        logger.error(f"An error occurred during classification: {e}")
-        return {"message": f"An error occurred during classification: {e}", "status": "error"}
 
 @app.get('/list_datasets')
 async def list_datasets():

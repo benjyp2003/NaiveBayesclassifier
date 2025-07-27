@@ -7,46 +7,6 @@ class Client:
         self.url = url
 
 
-    def check_server_health(self, max_retries: int = 3, retry_delay: float = 2.0):
-        """
-        Check if the server is up and running.
-        
-        Args:
-            max_retries: Maximum number of retry attempts
-            retry_delay: Delay between retries in seconds
-            
-        Returns:
-            dict: {"status": "success"|"error", "message": str}
-        """
-
-        # Runs (at default) 3 times with a 2 second delay to check if the server is up and running.
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(f"{self.url}/health", timeout=5)
-                if response.status_code == 200:
-                    return {"status": "success", "message": "Server is up and running"}
-                else:
-                    return {"status": "error", "message": f"Server returned status code: {response.status_code}"}
-            # If the server is not reachable, it will retry after a delay.
-            except requests.exceptions.ConnectionError:
-                if attempt < max_retries - 1:
-                    time.sleep(retry_delay)
-                    continue
-                else:
-                    return {"status": "error", "message": f"Server is not reachable after {max_retries} attempts"}
-            # If the server request times out, it will retry after a delay.
-            except requests.exceptions.Timeout:
-                if attempt < max_retries - 1:
-                    time.sleep(retry_delay)
-                    continue
-                else:
-                    return {"status": "error", "message": f"Server request timed out after {max_retries} attempts"}
-            except Exception as e:
-                return {"status": "error", "message": f"Unexpected error checking server: {e}"}
-        
-        return {"status": "error", "message": "Failed to connect to server"}
-
-
     def load_hardcoded_data(self):
         """ Load hardcoded data from the server."""
         try:
