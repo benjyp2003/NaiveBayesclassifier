@@ -14,9 +14,10 @@ class TrainingManager:
     def process_new_model(self, training_df, testing_df):
         """Send the data for training, and save the model."""
 
-        # convert the training data from df to dict
+        # convert the training and testing data from df to dict
         training_data = training_df.to_dict(orient="records")
         testing_df = testing_df.to_dict(orient="records")
+
         # send data for training
         if self.train_model_via_server(training_data):
             # get model accuracy
@@ -33,16 +34,17 @@ class TrainingManager:
                 print("Error testing model:", body.get("message"))
                 return None
 
-
     def train_model_via_server(self, training_data):
         """
-        Send training data and model name to the server for training and return the trained model.
+        Send training data to the server for training.
         """
         try:
-            # send data and model name to the server
+            # initialize the request body with training data
             req_body = {"data": training_data}
 
+            # send the request to the server for training
             res_body = self.client.send_for_training(req_body)
+            # check if the response is successful
             if res_body.get("status") == "success":
                 print("\nModel trained successfully via server.")
                 return True
@@ -50,12 +52,8 @@ class TrainingManager:
                 print("Failed to train model via server:", res_body.get("message"))
                 return False
 
-        except requests.exceptions.Timeout as e:
-            print(f"API request timed out: {e}")
-        except requests.exceptions.RequestException as e:
-            print(f"API request failed: {e}")
-        except OSError as e:
-            print(f"File error: {e}")
+        except Exception as e:
+            print(f"An error occurred while training the model via server: {e}")
         return False
 
 
