@@ -1,13 +1,9 @@
-.idea/
+# Python cache files
+__pycache__/
+*.pyc
 
 # Virtual environment
 venv/
-.venv/
 
-# Python bytecode files
-*.pyc
-
-
-# Python cache files
-__pycache__/
-*.py[cod]
+# PyCharm / IntelliJ settings
+.idea/
