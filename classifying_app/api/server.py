@@ -93,7 +93,7 @@ async def get_model():
         if response.get("status") == "success":
             MODEL = response.get("model")
             logger.info("Model fetched from builder and loaded successfully.")
-            return {"message": "Model fetched and loaded successfully.", "status": "success"}
+            return {"message": "Model fetched and loaded successfully.", "model": MODEL, "status": "success"}
         else:
             logger.warning(f"Failed to fetch model: {response.get('message', 'Unknown error')}")
             return {"message": response.get("message", "Failed to fetch model."), "status": "error"}
