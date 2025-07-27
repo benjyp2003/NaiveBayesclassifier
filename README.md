@@ -67,7 +67,7 @@ v2 - run 'docker build -t <image-name> .'
 v3 - first create a common network for the two containers to communicate: 'docker create network <network-name>'
      then run 'docker build -t <builder-image-name> .'
      run 'docker build -t <builder-image-name> .'    
-     then 'docker run -d --name <builder-container-name> --network <network-name> -p 8000:8000 <builder-image-name>' 
+     then 'docker run -d --name building_app_container --network <network-name> -p 8000:8000 <builder-image-name>' 
      then 'docker run -d --name <classifeir-container-name> --network <network-name> -p 8001:8000 <classifier-image-name>' .
      now you have two containers running two fastapi servers on http://localhost:8000 and http://localhost:8001
 ```
