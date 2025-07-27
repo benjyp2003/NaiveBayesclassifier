@@ -10,11 +10,7 @@ class Client:
     def check_builder_server_health(self, max_retries: int = 3, retry_delay: float = 2.0):
         """
         Check if the builder server is up and running.
-        
-        Args:
-            max_retries: Maximum number of retry attempts
-            retry_delay: Delay between retries in seconds
-            
+
         Returns:
             dict: {"status": "success"|"error", "message": str}
         """
