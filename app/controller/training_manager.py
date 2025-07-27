@@ -1,7 +1,7 @@
 import requests
 
-from building_app.api.client import Client
-from building_app.core.trainer import Trainer
+from app.api.client import Client
+from app.core.trainer import Trainer
 
 
 class TrainingManager:

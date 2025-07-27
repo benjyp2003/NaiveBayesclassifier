@@ -1,7 +1,7 @@
 import pandas as pd
 
-from building_app.controller.training_manager import TrainingManager
-from building_app.api.client import Client
+from app.controller.training_manager import TrainingManager
+from app.api.client import Client
 
 
 class Manager:

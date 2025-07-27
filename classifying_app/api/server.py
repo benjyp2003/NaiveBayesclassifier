@@ -15,7 +15,7 @@ MODEL = None
 @app.on_event("startup")
 async def fetch_model_on_startup():
     """
-    Fetch the model from building_app when the server starts.
+    Fetch the model from app when the server starts.
     """
     global MODEL
     logger.info("Startup: Checking builder server health...")
@@ -73,12 +73,12 @@ async def health_check():
 @app.get('/get_model')
 async def get_model():
     """
-    Fetches the model from the builder (building_app) and stores it locally.
+    Fetches the model from the builder (app) and stores it locally.
     """
     global MODEL
     logger.info("/get_model endpoint called.")
     try:
-        # Use the Docker network hostname for building_app
+        # Use the Docker network hostname for app
         client = Client(api_url='http://building_app:8000')
         
         # First check if the builder server is up

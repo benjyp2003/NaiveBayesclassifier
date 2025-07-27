@@ -1,7 +1,7 @@
 import os
 import time
-from building_app.api.client import Client
-from building_app.controller.manager import Manager
+from app.api.client import Client
+from app.controller.manager import Manager
 
 def run_automated_client_task():
     """This function contains the client logic that will be triggered automatically on server startup."""

@@ -6,16 +6,16 @@ import pandas as pd
 import os
 import logging
 
-from building_app.core.trainer import Trainer
-from building_app.core.validator import Validator
-from building_app.core.cleaner import Cleaner
-from building_app.main import run_automated_client_task
+from app.core.trainer import Trainer
+from app.core.validator import Validator
+from app.core.cleaner import Cleaner
+from app.main import run_automated_client_task
 
 app = FastAPI()
 
 temp_files = []
 MODEL = None
-_data_dir = "building_app/data"
+_data_dir = "app/data"
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)

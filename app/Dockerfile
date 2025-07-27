@@ -19,7 +19,7 @@ RUN pip install -r requirements.txt
 # Copy the rest of the application code into the container
 COPY building_app /app/building_app
 
-# Expose the port the building_app runs on
+# Expose the port the app runs on
 EXPOSE 8000
 
 # Command to run the application using uvicorn
