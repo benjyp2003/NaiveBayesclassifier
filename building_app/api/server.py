@@ -269,6 +269,50 @@ async def load_data(request: Request):
         logger.error(f"Exception in /load_data: {e}")
         return {"message": f"An error occurred: {e}", "status": "error"}
 
+
+@app.get('/list_datasets')
+async def list_datasets():
+    """List all available CSV datasets in the /data directory."""
+    logger.info("/list_datasets endpoint called.")
+    try:
+        data_dir = _data_dir
+        if not os.path.exists(data_dir):
+            logger.warning(f"Data directory {data_dir} does not exist.")
+            return {"datasets": [], "status": "error", "message": f"Data directory {data_dir} does not exist."}
+        files = [f for f in os.listdir(data_dir) if f.endswith('.csv')]
+        logger.info(f"Found datasets: {files}")
+        return {"datasets": files, "status": "success"}
+    except Exception as e:
+        logger.error(f"Error in /list_datasets: {e}")
+        return {"datasets": [], "status": "error", "message": str(e)}
+
+@app.get('/`get_dataset_columns`')
+async def get_dataset_columns(dataset: str):
+    """Return the columns/features of a given CSV dataset in /data."""
+    logger.info(f"/get_dataset_columns endpoint called for dataset: {dataset}")
+    try:
+        if not _data_dir:
+            logger.warning("Data directory is not set.")
+            return {"columns": [], "status": "error", "message": "Data directory is not set."}
+        data_dir = _data_dir
+
+        # initialize the dataset path
+        file_path = os.path.join(data_dir, dataset)
+        if not os.path.exists(file_path):
+            logger.warning(f"Dataset file {file_path} does not exist.")
+            return {"columns": [], "status": "error", "message": f"Dataset file {file_path} does not exist."}
+
+        # convert the dataset to a DataFrame and get the columns
+        df = pd.read_csv(file_path, nrows=1)
+        columns = list(df.columns)
+        logger.info(f"Columns for {dataset}: {columns}")
+        return {"columns": columns, "status": "success"}
+    except Exception as e:
+        logger.error(f"Error in /get_dataset_columns: {e}")
+        return {"columns": [], "status": "error", "message": str(e)}
+
+
+
 @app.post("/cache_model")
 async def save_model(request: Request):
     """
