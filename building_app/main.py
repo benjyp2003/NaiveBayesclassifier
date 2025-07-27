@@ -4,7 +4,7 @@ from building_app.api.client import Client
 from building_app.controller.manager import Manager
 
 def run_automated_client_task():
-    """This function contains the client logic that will be triggered on server startup."""
+    """This function contains the client logic that will be triggered automatically on server startup."""
     # Give the server a moment to be fully available
     time.sleep(3)
     print("--- 🚀 Triggering automated client task from main.py ---")
