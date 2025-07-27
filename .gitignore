@@ -1,0 +1,13 @@
+.idea/
+
+# Virtual environment
+venv/
+.venv/
+
+# Python bytecode files
+*.pyc
+
+
+# Python cache files
+__pycache__/
+*.py[cod]
