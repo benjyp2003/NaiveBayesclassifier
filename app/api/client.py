@@ -83,11 +83,7 @@ class Client:
     def clean_csv_file(self, file_path: str, **cleaning_options):
         """
         Clean a CSV file using the server's cleaning endpoint.
-        
-        Args:
-            file_path: Path to the CSV file to clean
-            **cleaning_options: Additional cleaning options (remove_duplicates, handle_missing, etc.)
-            
+
         Returns:
             dict: Response from the cleaning endpoint
         """
