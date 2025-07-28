@@ -16,12 +16,12 @@ class TrainingManager:
 
         # convert the training and testing data from df to dict
         training_data = training_df.to_dict(orient="records")
-        testing_df = testing_df.to_dict(orient="records")
+        testing_data = testing_df.to_dict(orient="records")
 
         # send data for training
         if self.train_model_via_server(training_data):
             # get model accuracy
-            body = self.client.test_model(testing_df)
+            body = self.client.test_model(testing_data)
             # check if the response is successful
             if body.get("status") == "success":
                 accuracy = body.get("Model_Accuracy")
@@ -33,6 +33,8 @@ class TrainingManager:
             else:
                 print("Error testing model:", body.get("message"))
                 return None
+        else:
+            return None
 
     def train_model_via_server(self, training_data):
         """
@@ -40,16 +42,16 @@ class TrainingManager:
         """
         try:
             # initialize the request body with training data
-            req_body = {"data": training_data}
+            request_body = {"data": training_data}
 
             # send the request to the server for training
-            res_body = self.client.send_for_training(req_body)
+            response_body = self.client.send_for_training(request_body)
             # check if the response is successful
-            if res_body.get("status") == "success":
+            if response_body.get("status") == "success":
                 print("\nModel trained successfully via server.")
                 return True
             else:
-                print("Failed to train model via server:", res_body.get("message"))
+                print("Failed to train model via server:", response_body.get("message"))
                 return False
 
         except Exception as e:

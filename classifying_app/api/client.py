@@ -7,6 +7,7 @@ class Client:
         self.api_url = api_url
         self.builder_url = builder_url
 
+
     def check_builder_server_health(self, max_retries: int = 3, retry_delay: float = 2.0):
         """
         Check if the builder server is up and running.

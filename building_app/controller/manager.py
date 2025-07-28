@@ -10,12 +10,12 @@ class Manager:
         self.client = Client()
 
 
-    def start(self):
+    def start_process(self):
         """Start model process handling."""
-        self.model_handling()
+        self.data_and_model_handling()
 
 
-    def model_handling(self):
+    def data_and_model_handling(self):
         # Load hardcoded data from the server.
         body = self.client.load_hardcoded_data()
         # Check if the response is successful
@@ -26,7 +26,7 @@ class Manager:
                 # Split the data set for training and testing
                 training_df, testing_df = self.split_the_data_set(df)
                 # Send the data for training and testing
-                accuracy = self.training_manager.process_new_model(training_df, testing_df)
+                self.training_manager.process_new_model(training_df, testing_df)
             else:
                 print("No data found in the hardcoded dataset.")
                 return

@@ -122,7 +122,7 @@ async def train_model(request: Request):
         data = body["data"]
         df = pd.DataFrame(data)
 
-        # Initialize and build the model
+        # Initialize the trainer and build the model
         trainer = Trainer()
         trained_model = trainer.build_model(df)
 
@@ -242,6 +242,7 @@ async def clean_csv_file(request: Request):
 
 @app.post('/load_data')
 async def load_data(request: Request):
+    """Load data from a given path and return it as a dictionary."""
     logger.info("/load_data endpoint called.")
     try:
         body = await request.json()
@@ -276,15 +277,19 @@ async def list_datasets():
     logger.info("/list_datasets endpoint called.")
     try:
         data_dir = _data_dir
+        # check if the data path exists
         if not os.path.exists(data_dir):
             logger.warning(f"Data directory {data_dir} does not exist.")
             return {"datasets": [], "status": "error", "message": f"Data directory {data_dir} does not exist."}
+
+        # run through the data directory and list all CSV files
         files = [f for f in os.listdir(data_dir) if f.endswith('.csv')]
         logger.info(f"Found datasets: {files}")
         return {"datasets": files, "status": "success"}
     except Exception as e:
         logger.error(f"Error in /list_datasets: {e}")
         return {"datasets": [], "status": "error", "message": str(e)}
+
 
 @app.get('/`get_dataset_columns`')
 async def get_dataset_columns(dataset: str):
@@ -331,6 +336,7 @@ async def save_model(request: Request):
             logger.warning("Model data is missing in /cache_model.")
             return {"message": "Model data is missing.", "status": "error"}
 
+        # Save the model data to a temporary file
         with tempfile.NamedTemporaryFile(mode='wb+', delete=False) as tmp:
             pickle.dump(model_data, tmp)
             temp_files.append(tmp.name)

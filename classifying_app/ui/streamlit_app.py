@@ -15,7 +15,7 @@ try:
         st.error(f"builder_app health check failed with status code {health_resp.status_code}.")
         st.stop()
     health_json = health_resp.json()
-    if not health_json.get("status", "").lower() == "ok":
+    if not health_json.get("status", "").lower() == "healthy":
         st.error(f"builder_app health check did not return OK: {health_json}")
         st.stop()
 except requests.exceptions.RequestException as e:
@@ -37,7 +37,7 @@ except requests.exceptions.RequestException as e:
     st.error(f"An error occurred while connecting to the builder server: {e}")
     st.stop()
 
-# 2. Fetch columns/features for the selected dataset from builder_app
+# 2. Get columns/features for the dataset from builder_app
 if dataset:
     try:
         columns_resp = requests.get(

@@ -2,6 +2,7 @@ class Validator:
 
     @staticmethod
     def validate_model_accuracy(model, test_data):
+        """Validate the model's accuracy using a test data."""
         if model:
             correct = 0
             total = len(test_data)

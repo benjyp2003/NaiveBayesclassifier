@@ -5,9 +5,8 @@ class Trainer:
 
     def build_model(self, df):
         """
-        Builds a Naive Bayes core from the input DataFrame or list of dicts.
-        This function calculates prior probabilities and conditional probabilities
-        for each class and feature..
+        Builds a Naive Bayes model from the input DataFrame or list of dicts.
+        This function calculates prior probabilities for each class and feature..
         """
         # Accept both DataFrame and list of dicts
         df = self.ensure_dataframe(df)

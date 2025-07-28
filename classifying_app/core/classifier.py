@@ -3,7 +3,7 @@ class Classifier:
 
     @staticmethod
     def classify_record(new_example, model):
-        """Calculate the posterior probabilities for each class
+        """Calculate the probabilities for each class
         This involves multiplying the prior probability by the likelihood of the new example
         given each class."""
         try:
